@@ -1,0 +1,36 @@
+datasource db {
+  provider = "mongodb"
+  url      = env("MONGO_URI")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id               String    @id @default(auto()) @map("_id") @db.ObjectId
+  email            String    @unique
+  name             String
+  password         String
+  resetToken       String?
+  resetTokenExpiry DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+}
+
+model ResetToken {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  email     String
+  token     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Event {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  image     String
+  title     String
+  date      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
