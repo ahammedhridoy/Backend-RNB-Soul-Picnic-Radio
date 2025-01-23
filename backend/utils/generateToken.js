@@ -5,11 +5,10 @@ const generateToken = async (user) => {
     const payload = {
       id: user.id,
       email: user.email,
-      role: user.role || "EDITOR", // Ensure a default role
     };
 
     const accessToken = jwt.sign(payload, process.env.JWT_SECRET, {
-      expiresIn: "365d", // Simplify expiration definition
+      expiresIn: "365d",
     });
 
     const accessTokenExp = Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 365;

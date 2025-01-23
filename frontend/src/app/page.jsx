@@ -1,9 +1,11 @@
-function Home() {
+import HomePage from "@/components/HomePage";
+
+const Home = () => {
   return (
-    <div>
-      <h1 className="text-3xl font-bold underline">Hello world!</h1>
+    <div className="w-full">
+      <HomePage />
     </div>
   );
-}
+};
 
 export default Home;

@@ -5,6 +5,7 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const path = require("path");
 const cookieParser = require("cookie-parser");
+const authRouter = require("./routes/authRoutes");
 
 dotenv.config();
 
@@ -12,20 +13,14 @@ const app = express();
 const prisma = new PrismaClient();
 
 // CORS Configuration
-app.use(
-  cors({
-    origin: process.env.CLIENT_DOMAIN_NAME,
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
-    allowedHeaders: [
-      "Origin",
-      "X-Requested-With",
-      "Content-Type",
-      "Accept",
-      "Authorization",
-    ],
-  })
-);
+const corsConfig = {
+  origin: "http://localhost:3000",
+  // origin: "http://localhost:3000",
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE"],
+};
+app.use(cors(corsConfig));
+app.options("", cors(corsConfig));
 
 // Middleware
 app.use(express.json());
@@ -52,6 +47,7 @@ async function checkDatabaseConnection() {
 checkDatabaseConnection();
 
 // Define API routes
+app.use("/api/v1/auth", authRouter);
 
 // Start the server
 const PORT = process.env.PORT || 5000;
