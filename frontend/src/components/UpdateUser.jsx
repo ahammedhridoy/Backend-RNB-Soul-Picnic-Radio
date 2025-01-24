@@ -1,31 +1,48 @@
 "use client";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import TextField from "@mui/material/TextField";
 import { Button } from "@mui/material";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
+import { GlobalContext } from "@/context/GlobalContext";
+import toast, { Toaster } from "react-hot-toast";
 
-const UpdateUser = ({ handleUpdateClose }) => {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
+const UpdateUser = ({ user, handleUpdateClose }) => {
+  const [name, setName] = useState(user?.name || "");
+  const [email, setEmail] = useState(user?.email || "");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [role, setRole] = useState("");
-
-  const handleChange = (event) => {
-    setRole(event.target.value);
-  };
+  const { updateUser } = useContext(GlobalContext);
 
   // Update User
   const handleUpdate = async (e) => {
     e.preventDefault();
-    handleUpdateClose();
+
+    if (!user?.id) {
+      return;
+    }
+
+    // Validate input fields
+    if (password && password.length < 6) {
+      toast.error("Password must be at least 6 characters long.");
+      return;
+    }
+
+    // Create the payload to send as JSON
+    const payload = {
+      name,
+      email,
+      password,
+    };
+
+    const success = await updateUser(user.id, payload);
+
+    if (success) {
+      handleUpdateClose();
+    }
   };
 
   return (
     <div>
+      <Toaster />
       <h1 className="text-2xl font-bold">Update User</h1>
       <hr />
 
@@ -49,7 +66,6 @@ const UpdateUser = ({ handleUpdateClose }) => {
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            required
           />
         </div>
         <div className="w-full mt-2">
@@ -60,7 +76,6 @@ const UpdateUser = ({ handleUpdateClose }) => {
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            required
           />
         </div>
         <div className="w-full mt-2">
@@ -71,26 +86,13 @@ const UpdateUser = ({ handleUpdateClose }) => {
             type="password"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
-            required
           />
-        </div>
-        <div className="w-full mt-2">
-          <FormControl variant="standard" className="w-full">
-            <InputLabel>Role</InputLabel>
-            <Select value={role} onChange={handleChange} label="Role">
-              <MenuItem value="">
-                <em>None</em>
-              </MenuItem>
-              <MenuItem value={"ADMIN"}>ADMIN</MenuItem>
-              <MenuItem value={"EDITOR"}>EDITOR</MenuItem>
-            </Select>
-          </FormControl>
         </div>
 
         <Button
           variant="contained"
           type="submit"
-          className="w-full mt-4 bg-[var(--gray-color)]"
+          className="w-full mt-4 bg-[--primary-color]"
         >
           Update User
         </Button>

@@ -332,43 +332,44 @@ const resetPassword = async (req, res) => {
   }
 };
 
-// Verify Role
-const verifyRole = (allowedRoles) => {
-  return async (req, res, next) => {
-    try {
-      const token =
-        req.cookies?.accessToken ||
-        (req.headers.authorization && req.headers.authorization.split(" ")[1]);
+// Verify User
+const verifyUser = async (req, res, next) => {
+  try {
+    // Extract token from cookies or Authorization header
+    const token =
+      req.cookies?.accessToken ||
+      (req.headers.authorization && req.headers.authorization.split(" ")[1]);
 
-      if (!token || token.split(".").length !== 3) {
-        return res
-          .status(401)
-          .json({ message: "Unauthorized: Malformed or missing token" });
-      }
-
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      if (!decoded || !decoded.id) {
-        return res.status(401).json({ message: "Unauthorized: Invalid token" });
-      }
-
-      const user = await prisma.user.findUnique({ where: { id: decoded.id } });
-      if (!user) {
-        return res
-          .status(401)
-          .json({ message: "Unauthorized: User not found" });
-      }
-
-      if (!allowedRoles.includes(user.role)) {
-        return res.status(403).json({ message: "Forbidden: Access denied" });
-      }
-
-      req.user = user;
-      next();
-    } catch (error) {
-      console.error("Error verifying role:", error.message);
-      res.status(500).json({ message: "Internal server error" });
+    // Check if token exists and is valid
+    if (!token || token.split(".").length !== 3) {
+      return res
+        .status(401)
+        .json({ message: "Unauthorized: Malformed or missing token" });
     }
-  };
+
+    // Verify JWT token
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    if (!decoded || !decoded.id) {
+      return res.status(401).json({ message: "Unauthorized: Invalid token" });
+    }
+
+    // Find user in the database
+    const user = await prisma.user.findUnique({ where: { id: decoded.id } });
+    if (!user) {
+      return res.status(401).json({ message: "Unauthorized: User not found" });
+    }
+
+    // Attach user to request object for downstream middleware/handlers
+    req.user = user;
+    next();
+  } catch (error) {
+    console.error("Error verifying user:", error.message);
+    res
+      .status(500)
+      .json({ message: "Internal server error during verification" });
+  }
 };
 
 module.exports = {
@@ -377,7 +378,7 @@ module.exports = {
   forgotPassword,
   resetPassword,
   logout,
-  verifyRole,
+  verifyUser,
   getAllUsers,
   getSingleUser,
   updateUser,

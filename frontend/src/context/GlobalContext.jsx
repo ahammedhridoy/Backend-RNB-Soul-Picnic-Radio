@@ -13,6 +13,7 @@ export const GlobalContextProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [allImages, setAllImages] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
+  const [events, setEvents] = useState([]);
 
   useEffect(() => {
     setLoading(true);
@@ -59,27 +60,6 @@ export const GlobalContextProvider = ({ children }) => {
     }
   };
 
-  // Fetch All Images
-  const fetchAllImages = async () => {
-    setLoading(true);
-    try {
-      const response = await apiClient.get(`api/v1/gallery/all`, {
-        withCredentials: true,
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-
-      if (response?.status === 200) {
-        setAllImages(response?.data?.images);
-      }
-    } catch (error) {
-      console.error("Error fetching images:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   // Fetch All users
   const fetchUsers = async () => {
     try {
@@ -105,7 +85,7 @@ export const GlobalContextProvider = ({ children }) => {
     try {
       const response = await apiClient.patch(
         `/api/v1/auth/user/update/${userId}`,
-        payload, // Send JSON payload directly
+        payload,
         {
           withCredentials: true,
           headers: {
@@ -185,6 +165,9 @@ export const GlobalContextProvider = ({ children }) => {
     try {
       const response = await apiClient.post(`/api/v1/auth/logout`, {
         withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
       });
 
       if (response?.status === 200) {
@@ -204,10 +187,75 @@ export const GlobalContextProvider = ({ children }) => {
     }
   };
 
+  // Get All Events
+  const fetchEvents = async (e) => {
+    setLoading(true);
+    try {
+      const res = await apiClient.get("/api/v1/event/all");
+      if (res?.status === 200) {
+        setEvents(res?.data?.events);
+      }
+    } catch (error) {
+      console.error("Error getting Events:", error);
+      toast.error(error.response?.data?.message || "Server error");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Delete Event
+  const deleteEvent = async (eventId, accessToken) => {
+    try {
+      const response = await apiClient.delete(`/api/v1/event/${eventId}`, {
+        withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      if (response.status === 200) {
+        toast.success("Event deleted successfully");
+        fetchEvents();
+        return true;
+      }
+    } catch (error) {
+      console.error("Error deleting event:", error);
+      toast.error(error.response?.data?.message || "Server error");
+      return false;
+    }
+  };
+
+  // Update blog
+  const updateEvent = async (eventId, formData) => {
+    try {
+      const response = await apiClient.patch(
+        `/api/v1/event/${eventId}`,
+        formData,
+        {
+          withCredentials: true,
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        toast.success("Event updated successfully");
+        fetchEvents();
+        return true;
+      }
+    } catch (error) {
+      console.error("Error updating event:", error);
+      toast.error(error.response?.data?.message || "Server error");
+      return false;
+    }
+  };
+
   // Fetching
   useEffect(() => {
     fetchUsers();
-    fetchAllImages();
+    fetchEvents();
   }, []);
 
   return (
@@ -217,6 +265,18 @@ export const GlobalContextProvider = ({ children }) => {
         accessToken,
         setCurrentUser,
         currentUser,
+        accessToken,
+        events,
+        updateEvent,
+        deleteEvent,
+        userLogout,
+        updateUser,
+        fetchUsers,
+        fetchSingleUser,
+        updateUserAccount,
+        deleteUser,
+        fetchEvents,
+        users,
       }}
     >
       {children}

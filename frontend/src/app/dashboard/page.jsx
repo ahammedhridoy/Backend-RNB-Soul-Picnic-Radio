@@ -1,14 +1,17 @@
 import React from "react";
 import { Card } from "@mui/material";
 import DashOverview from "@/components/DashOverview";
+import ProtectedRoute from "@/hooks/ProtectedRoute";
 
 const Dashboard = () => {
   return (
-    <div>
-      <Card className="min-h-screen p-4">
-        <DashOverview />
-      </Card>
-    </div>
+    <ProtectedRoute>
+      <div>
+        <Card className="min-h-screen p-4">
+          <DashOverview />
+        </Card>
+      </div>
+    </ProtectedRoute>
   );
 };
 

@@ -4,24 +4,33 @@ const {
   login,
   resetPassword,
   logout,
-  verifyAdmin,
+  verifyUser,
+  forgotPassword,
   getAllUsers,
   getSingleUser,
   updateUser,
   deleteUser,
-  verifyUser,
-  verifyEditor,
-  verifyRole,
-  forgotPassword,
 } = require("../controllers/authController");
 
 const authRouter = express.Router();
 
 // POST /api/v1/auth/register
-authRouter.post("/register", register);
+authRouter.post("/register", verifyUser, register);
 
 // POST /api/v1/auth/login
 authRouter.post("/login", login);
+
+// POST /api/v1/auth/user/all
+authRouter.get("/user/all", verifyUser, getAllUsers);
+
+// POST /api/v1/auth/user/:id
+authRouter.get("/user/:id", verifyUser, getSingleUser);
+
+// POST /api/v1/auth/user/update/:id
+authRouter.patch("/user/update/:id", verifyUser, updateUser);
+
+// POST /api/v1/auth/user/delete/:id
+authRouter.delete("/user/delete/:id", verifyUser, deleteUser);
 
 // POST /api/v1/auth/forgot-password
 authRouter.post("/forgot-password", forgotPassword);
@@ -30,6 +39,6 @@ authRouter.post("/forgot-password", forgotPassword);
 authRouter.post("/reset-password", resetPassword);
 
 // POST /api/v1/auth/logout
-authRouter.post("/logout", logout);
+authRouter.post("/logout", verifyUser, logout);
 
 module.exports = authRouter;

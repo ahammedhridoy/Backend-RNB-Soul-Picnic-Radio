@@ -6,6 +6,7 @@ const bodyParser = require("body-parser");
 const path = require("path");
 const cookieParser = require("cookie-parser");
 const authRouter = require("./routes/authRoutes");
+const eventRouter = require("./routes/eventRoutes");
 
 dotenv.config();
 
@@ -17,8 +18,12 @@ const corsConfig = {
   origin: "http://localhost:3000",
   // origin: "http://localhost:3000",
   credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE"],
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  exposedHeaders: ["Set-Cookie"],
+  preflightContinue: true,
 };
+
 app.use(cors(corsConfig));
 app.options("", cors(corsConfig));
 
@@ -48,6 +53,7 @@ checkDatabaseConnection();
 
 // Define API routes
 app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/event", eventRouter);
 
 // Start the server
 const PORT = process.env.PORT || 5000;

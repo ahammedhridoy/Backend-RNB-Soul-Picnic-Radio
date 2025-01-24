@@ -4,7 +4,7 @@ const LoadingSpinner = () => {
   return (
     <div className="flex items-center justify-center min-h-screen loading">
       <Box sx={{ display: "flex" }}>
-        <CircularProgress />
+        <CircularProgress className="text-[var(--primary-color)]" />
       </Box>
     </div>
   );

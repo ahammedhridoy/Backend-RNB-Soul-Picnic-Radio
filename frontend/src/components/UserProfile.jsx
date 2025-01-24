@@ -1,12 +1,20 @@
 "use client";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { TextField } from "@mui/material";
+import { GlobalContext } from "@/context/GlobalContext";
 
 const UserProfile = () => {
+  const { user, fetchSingleUser, updateUserAccount, loading, accessToken } =
+    useContext(GlobalContext);
+  const [name, setName] = useState(user?.name || "");
+  const [email, setEmail] = useState(user?.email || "");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
   // Update Profile
   const handleUpdate = async (e) => {
     e.preventDefault();
@@ -20,7 +28,7 @@ const UserProfile = () => {
             variant="h6"
             className="text-center text-[--light-title-color] font-bold"
           >
-            Ashik Ahammed Hridoy
+            {user?.name}
           </Typography>
         </CardContent>
         <CardActions className="flex justify-center">
@@ -33,24 +41,32 @@ const UserProfile = () => {
               label="Name"
               variant="outlined"
               className="w-full mb-4"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
             />
             <TextField
               label="Email"
               type="email"
               variant="outlined"
               className="w-full mb-4"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
             <TextField
               label="Password"
               type="password"
               variant="outlined"
               className="w-full mb-4"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
             />
             <TextField
               label="Confirm Password"
               type="password"
               variant="outlined"
               className="w-full mb-4"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
             />
 
             <Button
