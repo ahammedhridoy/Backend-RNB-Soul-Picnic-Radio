@@ -18,6 +18,7 @@ const AddEvent = () => {
   const [date, setDate] = useState(null);
   const [title, setTitle] = useState("");
   const [image, setImage] = useState(null);
+  const [url, setUrl] = useState(null);
 
   const { accessToken, fetchEvents } = useContext(GlobalContext);
 
@@ -31,7 +32,7 @@ const AddEvent = () => {
         return;
       }
 
-      if (!title || !date || !image) {
+      if (!title || !date || !image || !url) {
         toast.error("All fields are required");
         return;
       }
@@ -40,6 +41,7 @@ const AddEvent = () => {
       formData.append("title", title);
       formData.append("date", date);
       formData.append("image", image);
+      formData.append("url", url);
 
       const res = await apiClient.post("/api/v1/event/create", formData, {
         withCredentials: true,
@@ -53,6 +55,7 @@ const AddEvent = () => {
         toast.success("Event added successfully");
         setTitle("");
         setImage("");
+        setUrl("");
         fetchEvents();
       }
     } catch (error) {
@@ -92,7 +95,6 @@ const AddEvent = () => {
             </div>
             <div className="w-full mt-2">
               <TextField
-                id="blog-title"
                 label="Title"
                 variant="outlined"
                 className="w-full"
@@ -100,15 +102,26 @@ const AddEvent = () => {
                 onChange={(e) => setTitle(e.target.value)}
               />
             </div>
-            <LocalizationProvider dateAdapter={AdapterDayjs} className="mt-2 ">
-              <DemoContainer components={["DatePicker"]}>
-                <DatePicker
-                  label="Select Date"
-                  onChange={setDate}
-                  className="w-full"
-                />
-              </DemoContainer>
-            </LocalizationProvider>
+            <div className="w-full mt-2">
+              <TextField
+                label="URL"
+                variant="outlined"
+                className="w-full"
+                value={url}
+                onChange={(e) => setUrl(e.target.value)}
+              />
+            </div>
+            <div className="mt-2">
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DemoContainer components={["DatePicker"]}>
+                  <DatePicker
+                    label="Select Date"
+                    onChange={setDate}
+                    className="w-full "
+                  />
+                </DemoContainer>
+              </LocalizationProvider>
+            </div>
             <Button
               variant="contained"
               type="submit"

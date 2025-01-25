@@ -19,6 +19,7 @@ const UpdateEvent = ({ event, handleUpdateClose }) => {
   const [title, setTitle] = useState(event?.title);
   const [image, setImage] = useState(null);
   const { updateEvent } = useContext(GlobalContext);
+  const [url, setUrl] = useState(null);
 
   // Update Event
 
@@ -30,6 +31,7 @@ const UpdateEvent = ({ event, handleUpdateClose }) => {
     formData.append("title", title ? title : event?.title);
     formData.append("date", date ? date : event?.date);
     formData.append("image", image ? image : event?.image);
+    formData.append("url", url ? url : event?.url);
 
     // Call the updateSlide function with the slide ID and formData
     const success = await updateEvent(event?.id, formData);
@@ -83,15 +85,26 @@ const UpdateEvent = ({ event, handleUpdateClose }) => {
                   onChange={(e) => setTitle(e.target.value)}
                 />
               </div>
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DemoContainer components={["DatePicker"]}>
-                  <DatePicker
-                    label="Select Date"
-                    onChange={setDate}
-                    className="w-full"
-                  />
-                </DemoContainer>
-              </LocalizationProvider>
+              <div className="w-full mt-2">
+                <TextField
+                  label="URL"
+                  variant="outlined"
+                  className="w-full"
+                  value={url}
+                  onChange={(e) => setUrl(e.target.value)}
+                />
+              </div>
+              <div className="w-full mt-2">
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DemoContainer components={["DatePicker"]}>
+                    <DatePicker
+                      label="Select Date"
+                      onChange={setDate}
+                      className="w-full"
+                    />
+                  </DemoContainer>
+                </LocalizationProvider>
+              </div>
               <Button
                 variant="contained"
                 type="submit"

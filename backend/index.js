@@ -7,6 +7,7 @@ const path = require("path");
 const cookieParser = require("cookie-parser");
 const authRouter = require("./routes/authRoutes");
 const eventRouter = require("./routes/eventRoutes");
+const formRouter = require("./routes/form");
 
 dotenv.config();
 
@@ -19,6 +20,7 @@ const corsConfig = {
     "http://localhost:3000",
     "http://localhost:8081",
     "exp://192.168.0.199:8081",
+    "http://192.168.0.199:8081",
     "http://127.0.0.1:8081",
     "exp://127.0.0.1:8081",
   ],
@@ -59,6 +61,7 @@ checkDatabaseConnection();
 // Define API routes
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/event", eventRouter);
+app.use("/api/v1", formRouter);
 
 // Start the server
 const PORT = process.env.PORT || 5000;

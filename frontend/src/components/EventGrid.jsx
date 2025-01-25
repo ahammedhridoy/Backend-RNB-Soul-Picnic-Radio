@@ -54,36 +54,45 @@ const EventGrid = () => {
         ) : (
           events?.slice(0, visibleCount).map((event) => (
             <div sx={{ maxWidth: 345 }}>
-              <Link key={event.id} href={`/events/${event.id}`}>
-                <Card sx={{ maxWidth: 345 }} className="transition-all">
-                  <CardMedia
-                    component="img"
-                    height="194"
-                    image={`${process.env.NEXT_PUBLIC_IMAGE_URL}${event?.image}`}
-                    alt="event"
-                    className="object-cover h-[300px] w-[350px]"
-                  />
-                  <CardContent>
-                    <Typography
-                      gutterBottom
-                      variant="h5"
-                      component="div"
-                      className="line-clamp-2"
-                    >
-                      {event?.title}
-                    </Typography>
+              <Card sx={{ maxWidth: 345 }} className="transition-all">
+                <CardMedia
+                  component="img"
+                  height="194"
+                  image={`${process.env.NEXT_PUBLIC_IMAGE_URL}${event?.image}`}
+                  alt="event"
+                  className="object-cover h-[300px] w-[350px]"
+                />
+                <CardContent>
+                  <Typography
+                    gutterBottom
+                    variant="h5"
+                    component="div"
+                    className="line-clamp-2"
+                  >
+                    {event?.title}
+                  </Typography>
 
+                  <Typography
+                    gutterBottom
+                    variant="p"
+                    component="div"
+                    className="line-clamp-2"
+                  >
+                    {dayjs(event?.date).format("ddd, DD MMM YYYY")}
+                  </Typography>
+
+                  <Link href={`${event?.url}`} target="_blank">
                     <Typography
                       gutterBottom
                       variant="p"
                       component="div"
                       className="line-clamp-2"
                     >
-                      {dayjs(event?.date).format("ddd, DD MMM YYYY")}
+                      {event?.url}
                     </Typography>
-                  </CardContent>
-                </Card>
-              </Link>
+                  </Link>
+                </CardContent>
+              </Card>
               <div className="flex justify-end gap-4 p-4">
                 <Button
                   variant="contained"
