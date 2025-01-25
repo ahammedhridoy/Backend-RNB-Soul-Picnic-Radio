@@ -12,6 +12,9 @@ const ProtectedRoute = ({ children }) => {
     const accessToken = Cookies.get("accessToken");
     const user = Cookies.get("user");
 
+    console.log("accessToken: " + accessToken);
+    console.log("user: " + user);
+
     if (!user || !accessToken) {
       router.replace("/");
       return;
