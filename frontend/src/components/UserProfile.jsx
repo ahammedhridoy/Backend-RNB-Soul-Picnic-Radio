@@ -1,34 +1,113 @@
 "use client";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { TextField } from "@mui/material";
 import { GlobalContext } from "@/context/GlobalContext";
+import LoadingSpinner from "./LoadingSpinner";
+import toast, { Toaster } from "react-hot-toast";
+import apiClient from "@/config/axiosConfig";
 
 const UserProfile = () => {
-  const { user, fetchSingleUser, updateUserAccount, loading, accessToken } =
-    useContext(GlobalContext);
-  const [name, setName] = useState(user?.name || "");
-  const [email, setEmail] = useState(user?.email || "");
+  const { updateUserAccount, accessToken } = useContext(GlobalContext);
+  const [loading, setLoading] = useState(false);
+  const [user, setUser] = useState(null);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+
+  const getUser = JSON.parse(localStorage.getItem("user"));
+  const username = getUser?.name;
+
+  useEffect(() => {
+    const fetchSingleUser = async () => {
+      setLoading(true);
+      if (!getUser || !getUser.id) {
+        console.error("User or user.id is undefined");
+        return;
+      }
+
+      try {
+        const response = await apiClient.get(
+          `/api/v1/auth/user/${getUser.id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+
+        if (response?.status === 200) {
+          setUser(response?.data?.user);
+        } else {
+          console.error("Failed to fetch user:", response.data.message);
+        }
+      } catch (error) {
+        console.error("Error fetching user:", error);
+        throw error;
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSingleUser();
+  }, []);
+
+  // Update name and email when user data is fetched
+  useEffect(() => {
+    if (user) {
+      setName(user?.name || "");
+      setEmail(user?.email || "");
+    }
+  }, [user]);
+
+  if (loading) return <LoadingSpinner />;
 
   // Update Profile
   const handleUpdate = async (e) => {
     e.preventDefault();
+
+    if (!getUser?.id) {
+      console.error("User ID is missing");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      toast.error("Passwords do not match");
+      return;
+    }
+
+    // Validate input fields
+    if (password && password.length < 6) {
+      toast.error("Password must be at least 6 characters long.");
+      return;
+    }
+
+    // Create the payload to send as JSON
+    const payload = {
+      name,
+      email,
+      ...(password && { password }),
+    };
+
+    const success = await updateUserAccount(getUser?.id, payload);
+    if (success) {
+      toast.success("User updated successfully!");
+      setPassword("");
+      setConfirmPassword("");
+    }
   };
 
   return (
     <div className="flex items-center justify-center w-full min-h-screen">
+      <Toaster />
       <div className="w-full">
         <CardContent>
-          <Typography
-            variant="h6"
-            className="text-center text-[--light-title-color] font-bold"
-          >
-            {user?.name}
+          <Typography variant="h6" className="font-bold text-center text-black">
+            {username}
           </Typography>
         </CardContent>
         <CardActions className="flex justify-center">

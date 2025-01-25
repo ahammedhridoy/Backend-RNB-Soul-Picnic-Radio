@@ -15,8 +15,7 @@ const prisma = new PrismaClient();
 
 // CORS Configuration
 const corsConfig = {
-  origin: "http://localhost:3000",
-  // origin: "http://localhost:3000",
+  origin: "*", // Allows all origins
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
@@ -25,7 +24,7 @@ const corsConfig = {
 };
 
 app.use(cors(corsConfig));
-app.options("", cors(corsConfig));
+app.options("*", cors(corsConfig));
 
 // Middleware
 app.use(express.json());
