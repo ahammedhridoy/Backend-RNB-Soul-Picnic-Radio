@@ -13,9 +13,7 @@ const ProtectedRoute = ({ children }) => {
     const user = Cookies.get("user");
 
     if (!user || !accessToken) {
-      setTimeout(() => {
-        router.push("/");
-      }, 1000);
+      router.replace("/");
       return;
     }
 
