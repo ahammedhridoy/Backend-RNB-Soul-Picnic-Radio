@@ -11,7 +11,6 @@ export const GlobalContextProvider = ({ children }) => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState(null);
-  const [allImages, setAllImages] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
   const [events, setEvents] = useState([]);
 
@@ -28,7 +27,7 @@ export const GlobalContextProvider = ({ children }) => {
     }
 
     if (userFromCookie) {
-      setUser(JSON.parse(userFromCookie));
+      setUser(userFromCookie);
     }
 
     setLoading(false);
@@ -44,6 +43,7 @@ export const GlobalContextProvider = ({ children }) => {
 
     try {
       const response = await apiClient.get(`/api/v1/auth/user/${user.id}`, {
+        withCredentials: true,
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
@@ -68,7 +68,9 @@ export const GlobalContextProvider = ({ children }) => {
       const response = await apiClient.get("/api/v1/auth/user/all", {
         withCredentials: true,
         headers: {
-          Authorization: `Bearer ${accessToken}`,
+          Authorization: `Bearer ${JSON.parse(
+            localStorage.getItem("accessToken")
+          )}`,
         },
       });
 
@@ -206,7 +208,7 @@ export const GlobalContextProvider = ({ children }) => {
   };
 
   // Delete Event
-  const deleteEvent = async (eventId, accessToken) => {
+  const deleteEvent = async (eventId) => {
     try {
       const response = await apiClient.delete(`/api/v1/event/${eventId}`, {
         withCredentials: true,

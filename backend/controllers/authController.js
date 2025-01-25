@@ -339,7 +339,6 @@ const verifyUser = async (req, res, next) => {
     const token =
       req.cookies?.accessToken ||
       (req.headers.authorization && req.headers.authorization.split(" ")[1]);
-
     // Check if token exists and is valid
     if (!token || token.split(".").length !== 3) {
       return res

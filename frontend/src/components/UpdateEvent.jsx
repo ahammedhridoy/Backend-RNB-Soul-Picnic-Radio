@@ -19,7 +19,7 @@ const UpdateEvent = ({ event, handleUpdateClose }) => {
   const [title, setTitle] = useState(event?.title);
   const [image, setImage] = useState(null);
   const { updateEvent } = useContext(GlobalContext);
-  const [url, setUrl] = useState(null);
+  const [url, setUrl] = useState(event?.url);
 
   // Update Event
 
