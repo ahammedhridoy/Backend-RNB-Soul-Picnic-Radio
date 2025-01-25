@@ -372,6 +372,10 @@ const verifyUser = async (req, res, next) => {
   }
 };
 
+const authorized = (req, res) => {
+  res.status(200).json({ verified: true });
+};
+
 module.exports = {
   register,
   login,
@@ -383,4 +387,5 @@ module.exports = {
   getSingleUser,
   updateUser,
   deleteUser,
+  authorized,
 };

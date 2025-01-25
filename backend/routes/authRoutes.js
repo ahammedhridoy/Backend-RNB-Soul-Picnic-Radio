@@ -10,6 +10,7 @@ const {
   getSingleUser,
   updateUser,
   deleteUser,
+  authorized,
 } = require("../controllers/authController");
 
 const authRouter = express.Router();
@@ -40,5 +41,8 @@ authRouter.post("/reset-password", resetPassword);
 
 // POST /api/v1/auth/logout
 authRouter.post("/logout", verifyUser, logout);
+
+// POST /api/v1/auth/logout
+authRouter.post("/verify", verifyUser, authorized);
 
 module.exports = authRouter;

@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation"; // Next.js navigation hook
-import Cookies from "js-cookie";
+import { useRouter } from "next/navigation";
+import axios from "axios";
 import LoadingSpinner from "@/components/LoadingSpinner";
 
 const ProtectedRoute = ({ children }) => {
@@ -9,18 +9,36 @@ const ProtectedRoute = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const accessToken = Cookies.get("accessToken");
-    const user = Cookies.get("user");
+    const verifyUser = async () => {
+      try {
+        // Send a request to the backend to verify the user
+        const response = await axios.post(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/auth/verify`,
+          {},
+          {
+            withCredentials: true,
+            headers: {
+              Authorization: `Bearer ${JSON.parse(
+                localStorage.getItem("accessToken")
+              )}`,
+            },
+          }
+        );
 
-    console.log("accessToken: " + accessToken);
-    console.log("user: " + user);
+        if (response?.status === 200 && response?.data?.verified) {
+          // User is verified, allow access
+          setLoading(false);
+        } else {
+          // User is not verified, redirect to login
+          router.replace("/");
+        }
+      } catch (error) {
+        console.error("Verification failed:", error);
+        router.replace("/");
+      }
+    };
 
-    if (!user || !accessToken) {
-      router.replace("/");
-      return;
-    }
-
-    setLoading(false);
+    verifyUser();
   }, [router]);
 
   if (loading) return <LoadingSpinner />;
