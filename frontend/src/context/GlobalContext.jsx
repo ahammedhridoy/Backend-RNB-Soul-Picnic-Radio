@@ -169,9 +169,6 @@ export const GlobalContextProvider = ({ children }) => {
     try {
       const response = await apiClient.post(`/api/v1/auth/logout`, {
         withCredentials: true,
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
       });
 
       if (response?.status === 200) {

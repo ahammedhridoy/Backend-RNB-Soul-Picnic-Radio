@@ -40,7 +40,7 @@ authRouter.post("/forgot-password", forgotPassword);
 authRouter.post("/reset-password", resetPassword);
 
 // POST /api/v1/auth/logout
-authRouter.post("/logout", verifyUser, logout);
+authRouter.post("/logout", logout);
 
 // POST /api/v1/auth/logout
 authRouter.post("/verify", verifyUser, authorized);
