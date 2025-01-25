@@ -18,6 +18,7 @@ const prisma = new PrismaClient();
 const corsConfig = {
   origin: [
     "http://localhost:3000",
+    "https://dashboard-frontend-rnb-soul-picnic-radio.vercel.app",
     "http://localhost:8081",
     "exp://192.168.0.199:8081",
     "http://192.168.0.199:8081",
