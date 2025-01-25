@@ -18,8 +18,10 @@ export const GlobalContextProvider = ({ children }) => {
   useEffect(() => {
     setLoading(true);
 
-    const accessTokenFromCookie = Cookies.get("accessToken");
-    const userFromCookie = Cookies.get("user");
+    const accessTokenFromCookie = JSON.parse(
+      localStorage.getItem("accessToken")
+    );
+    const userFromCookie = JSON.parse(localStorage.getItem("user"));
 
     if (accessTokenFromCookie) {
       setAccessToken(accessTokenFromCookie);
