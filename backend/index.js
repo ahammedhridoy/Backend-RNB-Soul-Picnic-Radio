@@ -15,7 +15,13 @@ const prisma = new PrismaClient();
 
 // CORS Configuration
 const corsConfig = {
-  origin: "*", // Allows all origins
+  origin: [
+    "http://localhost:3000",
+    "http://localhost:8081",
+    "exp://192.168.0.199:8081",
+    "http://127.0.0.1:8081",
+    "exp://127.0.0.1:8081",
+  ],
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
