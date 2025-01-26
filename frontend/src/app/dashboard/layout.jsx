@@ -13,7 +13,7 @@ export default function DashboardLayout({ children }) {
         </aside>
 
         {/* Main Content */}
-        <main className="flex-1 overflow-auto bg-gray-100">
+        <main className="flex-1 p-2 overflow-auto bg-gray-100">
           <Navigation />
           <DashMobileSidebar />
           {children}
