@@ -14,11 +14,13 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import Link from "next/link";
 import toast, { Toaster } from "react-hot-toast";
 import apiClient from "@/config/axiosConfig";
+import LoadingSpinner from "./LoadingSpinner";
 
 const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(true);
 
   // Submit form
   const handleSubmit = async (e) => {
@@ -59,18 +61,18 @@ const LoginForm = () => {
   };
 
   //   User Check
-  //   useEffect(() => {
-  //     const currentUser = localStorage.getItem("user");
-  //     if (currentUser) {
-  //       window.location.href = "/";
-  //     } else {
-  //       setLoading(false);
-  //     }
-  //   }, []);
+  useEffect(() => {
+    const currentUser = localStorage.getItem("user");
+    if (currentUser) {
+      window.location.href = "/dashboard";
+    } else {
+      setLoading(false);
+    }
+  }, []);
 
-  //   if (loading) {
-  //     return <LoadingSpinner />;
-  //   }
+  if (loading) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <div className="login-form">

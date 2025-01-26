@@ -10,10 +10,12 @@ import FormControl from "@mui/material/FormControl";
 import toast, { Toaster } from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import apiClient from "@/config/axiosConfig";
+import LoadingSpinner from "./LoadingSpinner";
 
 const ForgotPasswordForm = () => {
   const [email, setEmail] = useState("");
   const router = useRouter();
+  const [loading, setLoading] = useState(true);
   // Submit form
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -42,18 +44,18 @@ const ForgotPasswordForm = () => {
     }
   };
 
-  //   useEffect(() => {
-  //     const currentUser = localStorage.getItem("user");
-  //     if (currentUser) {
-  //       window.location.href = "/";
-  //     } else {
-  //       setLoading(false);
-  //     }
-  //   }, []);
+  useEffect(() => {
+    const currentUser = localStorage.getItem("user");
+    if (currentUser) {
+      window.location.href = "/dashboard";
+    } else {
+      setLoading(false);
+    }
+  }, []);
 
-  //   if (loading) {
-  //     return <LoadingSpinner />;
-  //   }
+  if (loading) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <div className="forgot-form">

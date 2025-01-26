@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
@@ -15,6 +15,7 @@ import IconButton from "@mui/material/IconButton";
 import toast, { Toaster } from "react-hot-toast";
 import { useParams } from "next/navigation";
 import apiClient from "@/config/axiosConfig";
+import LoadingSpinner from "./LoadingSpinner";
 
 const ResetPasswordForm = () => {
   const router = useRouter();
@@ -22,6 +23,7 @@ const ResetPasswordForm = () => {
   const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [loading, setLoading] = useState(true);
 
   const { token } = useParams();
 
@@ -62,6 +64,19 @@ const ResetPasswordForm = () => {
   const handleClickShowPassword = () => setShowPassword((show) => !show);
   const handleClickShowConfirmPassword = () =>
     setShowConfirmPassword((show) => !show);
+
+  useEffect(() => {
+    const currentUser = localStorage.getItem("user");
+    if (currentUser) {
+      window.location.href = "/dashboard";
+    } else {
+      setLoading(false);
+    }
+  }, []);
+
+  if (loading) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <div className="forgot-form">
