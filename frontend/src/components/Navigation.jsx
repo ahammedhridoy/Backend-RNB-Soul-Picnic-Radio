@@ -10,7 +10,7 @@ const Navigation = () => {
       <div className="flex items-center justify-end h-[50px] mx-4">
         <Button
           variant="contained"
-          className="bg-[#121212] font-bold"
+          className="bg-[--black-color] font-bold"
           onClick={userLogout}
         >
           Logout

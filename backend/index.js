@@ -20,6 +20,7 @@ const corsConfig = {
     "http://localhost:3000",
     "https://dashboard-frontend-rnb-soul-picnic-radio.vercel.app",
     "http://192.168.0.199:8081",
+    "*",
   ],
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],

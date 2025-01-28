@@ -83,7 +83,7 @@ const ForgotPasswordForm = () => {
                     Email
                   </InputLabel>
                   <OutlinedInput
-                    className="bg-[var(--input-bg-color)]"
+                    className="bg-[var(--input-bg-color)] "
                     type="email"
                     label="Email"
                     required
