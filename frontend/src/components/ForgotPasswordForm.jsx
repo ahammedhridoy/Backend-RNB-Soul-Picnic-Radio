@@ -97,7 +97,7 @@ const ForgotPasswordForm = () => {
                   variant="contained"
                   className="w-full bg-[var(--primary-color)]"
                 >
-                  Send
+                  {loading ? "Loading..." : "Send Reset Password Email"}
                 </Button>
               </div>
             </Box>

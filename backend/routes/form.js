@@ -12,6 +12,9 @@ const transporter = nodemailer.createTransport({
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASS,
   },
+  tls: {
+    rejectUnauthorized: false,
+  },
 });
 
 // POST /form
@@ -19,6 +22,7 @@ formRouter.post("/form", async (req, res) => {
   const { firstName, lastName, email, phone, address, city, subject } =
     req.body;
 
+  // Validate required fields
   if (
     !firstName ||
     !lastName ||
@@ -31,7 +35,7 @@ formRouter.post("/form", async (req, res) => {
     return res.status(400).json({ message: "All fields are required!" });
   }
 
-  const fullname = firstName + " " + lastName;
+  const fullname = `${firstName} ${lastName}`;
 
   // Email options
   const mailOptions = {
@@ -55,7 +59,7 @@ formRouter.post("/form", async (req, res) => {
     await transporter.sendMail(mailOptions);
     return res.status(200).json({ message: "Email sent successfully!" });
   } catch (error) {
-    console.error("Error sending email:", error);
+    console.error("Error sending email:", error.message); // Log detailed error
     return res.status(500).json({ message: "Failed to send email." });
   }
 });
