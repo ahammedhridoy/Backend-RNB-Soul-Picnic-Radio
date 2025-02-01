@@ -122,7 +122,7 @@ const AddUser = () => {
           <Button
             variant="contained"
             type="submit"
-            className="w-full mt-4 bg-[var(--primary-color)]"
+            className="w-full mt-4 btnCss marginTop"
           >
             Add User
           </Button>

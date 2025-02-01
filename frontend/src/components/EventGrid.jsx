@@ -78,7 +78,9 @@ const EventGrid = () => {
                     component="div"
                     className="line-clamp-2"
                   >
-                    {dayjs(event?.date).format("ddd, DD MMM YYYY")}
+                    {dayjs(event?.date).format("ddd, DD")}
+                    {dayjs(event?.secondDate).format(" - DD ")}
+                    {dayjs(event?.date).format("MMM YYYY")}
                   </Typography>
 
                   <Link href={`${event?.url}`} target="_blank">

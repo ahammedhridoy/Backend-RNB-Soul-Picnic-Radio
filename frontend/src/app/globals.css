@@ -65,3 +65,22 @@ body {
   padding: 10px 10px;
   font-size: 15px;
 }
+
+.btnCss {
+  background-color: #2c9962;
+  border: 1px solid #2c9962;
+  border-radius: 5px;
+  padding: 10px 10px;
+  font-size: 15px;
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.marginTop {
+  margin-top: 10px;
+}
+
+.backgroundColor {
+  background-color: #28282b;
+}

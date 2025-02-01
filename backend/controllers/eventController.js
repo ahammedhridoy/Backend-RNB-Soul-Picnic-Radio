@@ -5,7 +5,7 @@ const path = require("path");
 // Create Event
 const createEvent = async (req, res) => {
   try {
-    const { title, date, url } = req.body;
+    const { title, date, url, secondDate } = req.body;
     const imageUrl = req.file ? `/uploads/${req.file.filename}` : null;
 
     const newEvent = await prisma.event.create({
@@ -13,6 +13,7 @@ const createEvent = async (req, res) => {
         title,
         date,
         url,
+        secondDate,
         image: imageUrl,
       },
     });
@@ -47,7 +48,7 @@ const getAllEvents = async (req, res) => {
 const updateEvent = async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, date, url } = req.body;
+    const { title, date, url, secondDate } = req.body;
     const imageUrl = req.file ? `/uploads/${req.file.filename}` : null;
 
     // Check if the event exists
@@ -74,6 +75,7 @@ const updateEvent = async (req, res) => {
         title,
         date,
         url,
+        secondDate,
         ...(imageUrl && { image: imageUrl }),
       },
     });

@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import Card from "@mui/material/Card";
-import { Button, CardContent, Typography } from "@mui/material";
+import { Button, CardContent, InputLabel, Typography } from "@mui/material";
 import TextField from "@mui/material/TextField";
 import { useContext, useState } from "react";
 import { toast } from "react-hot-toast";
@@ -20,6 +20,7 @@ const UpdateEvent = ({ event, handleUpdateClose }) => {
   const [image, setImage] = useState(null);
   const { updateEvent } = useContext(GlobalContext);
   const [url, setUrl] = useState(event?.url);
+  const [secondDate, setSecondDate] = useState(event?.secondDate);
 
   // Update Event
 
@@ -32,6 +33,7 @@ const UpdateEvent = ({ event, handleUpdateClose }) => {
     formData.append("date", date ? date : event?.date);
     formData.append("image", image ? image : event?.image);
     formData.append("url", url ? url : event?.url);
+    formData.append("secondDate", secondDate ? secondDate : event?.secondDate);
 
     // Call the updateSlide function with the slide ID and formData
     const success = await updateEvent(event?.id, formData);
@@ -57,6 +59,7 @@ const UpdateEvent = ({ event, handleUpdateClose }) => {
           >
             <div className="w-full">
               <div className="mt-4 file-input">
+                <InputLabel>Select Image</InputLabel>
                 <input
                   type="file"
                   accept="image/*"
@@ -71,13 +74,14 @@ const UpdateEvent = ({ event, handleUpdateClose }) => {
                     src={URL.createObjectURL(image)}
                     width={200}
                     height={200}
-                    className="w-[500px] h-[300px] border-2 border-gray-400 border-dashed"
+                    className="w-[300px] h-[300px] border-2 border-gray-400 border-dashed"
+                    alt="Event Image"
                   />
                 )}
               </div>
               <div className="w-full mt-2">
+                <InputLabel>Title</InputLabel>
                 <TextField
-                  id="blog-title"
                   label="Title"
                   variant="outlined"
                   className="w-full"
@@ -86,6 +90,7 @@ const UpdateEvent = ({ event, handleUpdateClose }) => {
                 />
               </div>
               <div className="w-full mt-2">
+                <InputLabel>Event URL</InputLabel>
                 <TextField
                   label="URL"
                   variant="outlined"
@@ -94,13 +99,27 @@ const UpdateEvent = ({ event, handleUpdateClose }) => {
                   onChange={(e) => setUrl(e.target.value)}
                 />
               </div>
-              <div className="w-full mt-2">
+              <div className="mt-2">
+                <InputLabel>From</InputLabel>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DemoContainer components={["DatePicker"]}>
                     <DatePicker
                       label="Select Date"
                       onChange={setDate}
-                      className="w-full"
+                      className="w-full "
+                    />
+                  </DemoContainer>
+                </LocalizationProvider>
+              </div>
+
+              <div className="mt-2">
+                <InputLabel>To (Optional)</InputLabel>
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DemoContainer components={["DatePicker"]}>
+                    <DatePicker
+                      label="Select Date"
+                      onChange={setSecondDate}
+                      className="w-full "
                     />
                   </DemoContainer>
                 </LocalizationProvider>

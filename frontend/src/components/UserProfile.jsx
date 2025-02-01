@@ -127,7 +127,7 @@ const UserProfile = () => {
               label="Email"
               type="email"
               variant="outlined"
-              className="w-full mb-4"
+              className="w-full mb-4 marginTop"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
@@ -135,7 +135,7 @@ const UserProfile = () => {
               label="Password"
               type="password"
               variant="outlined"
-              className="w-full mb-4"
+              className="w-full mb-4 marginTop"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
@@ -143,7 +143,7 @@ const UserProfile = () => {
               label="Confirm Password"
               type="password"
               variant="outlined"
-              className="w-full mb-4"
+              className="w-full mb-4 marginTop"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
             />
@@ -151,7 +151,7 @@ const UserProfile = () => {
             <Button
               type="submit"
               variant="contained"
-              className="bg-[var(--primary-color)] flex justify-center items-center text-center mx-auto mb-4"
+              className="flex items-center justify-center mx-auto mb-4 text-center marginTop btnCss"
             >
               Update Profile
             </Button>

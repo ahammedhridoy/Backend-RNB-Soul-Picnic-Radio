@@ -109,7 +109,10 @@ const LoginForm = () => {
                   />
                 </FormControl>
 
-                <FormControl variant="outlined" className="w-full mb-5">
+                <FormControl
+                  variant="outlined"
+                  className="w-full mb-5 marginTop"
+                >
                   <InputLabel htmlFor="outlined-adornment-password">
                     Password
                   </InputLabel>
@@ -137,7 +140,7 @@ const LoginForm = () => {
 
                 <p className="mb-5 text-[var(--primary-color)]">
                   <Link
-                    className="hover:border-b-2 w-fit hover:text-[var(--yellow-color)]"
+                    className="hover:border-b-2 w-fit "
                     href="/forgot-password"
                   >
                     Forgot password?
@@ -147,7 +150,7 @@ const LoginForm = () => {
                 <Button
                   type="submit"
                   variant="contained"
-                  className="w-full bg-[var(--primary-color)]"
+                  className="w-full btnCss"
                 >
                   Login
                 </Button>

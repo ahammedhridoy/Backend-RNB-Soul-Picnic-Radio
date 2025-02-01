@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import Card from "@mui/material/Card";
-import { Button, CardContent, Typography } from "@mui/material";
+import { Button, CardContent, InputLabel, Typography } from "@mui/material";
 import TextField from "@mui/material/TextField";
 import { useContext, useState } from "react";
 import { toast } from "react-hot-toast";
@@ -19,6 +19,7 @@ const AddEvent = () => {
   const [title, setTitle] = useState("");
   const [image, setImage] = useState(null);
   const [url, setUrl] = useState(null);
+  const [secondDate, setSecondDate] = useState(null);
 
   const { accessToken, fetchEvents } = useContext(GlobalContext);
 
@@ -43,6 +44,10 @@ const AddEvent = () => {
       formData.append("image", image);
       formData.append("url", url);
 
+      if (secondDate) {
+        formData.append("secondDate", secondDate);
+      }
+
       const res = await apiClient.post("/api/v1/event/create", formData, {
         withCredentials: true,
         headers: {
@@ -57,6 +62,8 @@ const AddEvent = () => {
         setImage("");
         setUrl("");
         fetchEvents();
+        setDate(null);
+        setSecondDate(null);
       }
     } catch (error) {
       console.error("Error adding Event:", error);
@@ -74,6 +81,7 @@ const AddEvent = () => {
         <form encType="multipart/form-data" method="post" onSubmit={addEvent}>
           <div className="w-full">
             <div className="mt-4 file-input">
+              <InputLabel>Select Image</InputLabel>
               <input
                 type="file"
                 accept="image/*"
@@ -94,6 +102,7 @@ const AddEvent = () => {
               )}
             </div>
             <div className="w-full mt-2">
+              <InputLabel>Title</InputLabel>
               <TextField
                 label="Title"
                 variant="outlined"
@@ -103,6 +112,7 @@ const AddEvent = () => {
               />
             </div>
             <div className="w-full mt-2">
+              <InputLabel>Event URL</InputLabel>
               <TextField
                 label="URL"
                 variant="outlined"
@@ -112,6 +122,7 @@ const AddEvent = () => {
               />
             </div>
             <div className="mt-2">
+              <InputLabel>From</InputLabel>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DemoContainer components={["DatePicker"]}>
                   <DatePicker
@@ -122,10 +133,23 @@ const AddEvent = () => {
                 </DemoContainer>
               </LocalizationProvider>
             </div>
+
+            <div className="mt-2">
+              <InputLabel>To (Optional)</InputLabel>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DemoContainer components={["DatePicker"]}>
+                  <DatePicker
+                    label="Select Date"
+                    onChange={setSecondDate}
+                    className="w-full "
+                  />
+                </DemoContainer>
+              </LocalizationProvider>
+            </div>
             <Button
               variant="contained"
               type="submit"
-              className="w-full mt-4 bg-[var(--primary-color)]"
+              className="w-full mt-4 btnCss marginTop"
             >
               Add Event
             </Button>
