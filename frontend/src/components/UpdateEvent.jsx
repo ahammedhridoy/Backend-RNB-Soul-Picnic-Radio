@@ -13,6 +13,10 @@ import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import utc from "dayjs/plugin/utc";
+import dayjs from "dayjs";
+
+dayjs.extend(utc);
 
 const UpdateEvent = ({ event, handleUpdateClose }) => {
   const [date, setDate] = useState(event?.date);
@@ -30,10 +34,20 @@ const UpdateEvent = ({ event, handleUpdateClose }) => {
     // Create FormData to send image
     const formData = new FormData();
     formData.append("title", title ? title : event?.title);
-    formData.append("date", date ? date : event?.date);
+    formData.append(
+      "date",
+      date ? (date ? dayjs(date).utc().format() : null) : event?.date
+    );
     formData.append("image", image ? image : event?.image);
     formData.append("url", url ? url : event?.url);
-    formData.append("secondDate", secondDate ? secondDate : event?.secondDate);
+    formData.append(
+      "secondDate",
+      secondDate
+        ? secondDate
+          ? dayjs(secondDate).utc().format()
+          : null
+        : event?.secondDate
+    );
 
     // Call the updateSlide function with the slide ID and formData
     const success = await updateEvent(event?.id, formData);

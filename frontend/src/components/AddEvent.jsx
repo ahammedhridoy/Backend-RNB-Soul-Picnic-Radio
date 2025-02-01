@@ -13,6 +13,10 @@ import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import utc from "dayjs/plugin/utc";
+import dayjs from "dayjs";
+
+dayjs.extend(utc);
 
 const AddEvent = () => {
   const [date, setDate] = useState(null);
@@ -40,12 +44,15 @@ const AddEvent = () => {
 
       const formData = new FormData();
       formData.append("title", title);
-      formData.append("date", date);
+      formData.append("date", date ? dayjs(date).utc().format() : null);
       formData.append("image", image);
       formData.append("url", url);
 
       if (secondDate) {
-        formData.append("secondDate", secondDate);
+        formData.append(
+          "secondDate",
+          secondDate ? dayjs(secondDate).utc().format() : null
+        );
       }
 
       const res = await apiClient.post("/api/v1/event/create", formData, {
@@ -127,7 +134,7 @@ const AddEvent = () => {
                 <DemoContainer components={["DatePicker"]}>
                   <DatePicker
                     label="Select Date"
-                    onChange={setDate}
+                    onChange={(newValue) => setDate(newValue)}
                     className="w-full "
                   />
                 </DemoContainer>
@@ -140,7 +147,7 @@ const AddEvent = () => {
                 <DemoContainer components={["DatePicker"]}>
                   <DatePicker
                     label="Select Date"
-                    onChange={setSecondDate}
+                    onChange={(newValue) => setSecondDate(newValue)}
                     className="w-full "
                   />
                 </DemoContainer>

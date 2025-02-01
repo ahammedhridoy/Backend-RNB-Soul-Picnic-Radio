@@ -27,12 +27,12 @@ model ResetToken {
 }
 
 model Event {
-  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
   image      String
   title      String
-  date       String
-  secondDate String?
+  date       DateTime
+  secondDate DateTime?
   url        String
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
 }

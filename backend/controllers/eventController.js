@@ -11,9 +11,9 @@ const createEvent = async (req, res) => {
     const newEvent = await prisma.event.create({
       data: {
         title,
-        date,
+        date: new Date(date),
         url,
-        secondDate,
+        secondDate: secondDate ? new Date(secondDate) : null,
         image: imageUrl,
       },
     });
@@ -73,9 +73,9 @@ const updateEvent = async (req, res) => {
       where: { id },
       data: {
         title,
-        date,
+        date: new Date(date),
         url,
-        secondDate,
+        secondDate: secondDate ? new Date(secondDate) : null,
         ...(imageUrl && { image: imageUrl }),
       },
     });
