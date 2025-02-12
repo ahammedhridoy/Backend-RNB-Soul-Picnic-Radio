@@ -18,6 +18,27 @@ model User {
   updatedAt        DateTime  @updatedAt
 }
 
+model GeneralUser {
+  id    String @id @default(auto()) @map("_id") @db.ObjectId
+  email String @unique
+  name  String
+  posts Post[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Post {
+  id       String      @id @default(auto()) @map("_id") @db.ObjectId
+  author   GeneralUser @relation(fields: [authorId], references: [id])
+  authorId String      @db.ObjectId
+  text     String
+  image    String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model ResetToken {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   email     String
