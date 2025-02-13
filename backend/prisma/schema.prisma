@@ -19,10 +19,12 @@ model User {
 }
 
 model GeneralUser {
-  id    String @id @default(auto()) @map("_id") @db.ObjectId
-  email String @unique
-  name  String
-  posts Post[]
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  email    String @unique
+  userId   String @unique
+  name     String
+  imageUrl String
+  posts    Post[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -32,8 +34,9 @@ model Post {
   id       String      @id @default(auto()) @map("_id") @db.ObjectId
   author   GeneralUser @relation(fields: [authorId], references: [id])
   authorId String      @db.ObjectId
-  text     String
-  image    String?
+  text     String?
+  images   String[]
+  likes    String[]    @default([])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

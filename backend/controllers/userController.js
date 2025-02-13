@@ -8,10 +8,10 @@ const { ObjectId } = require("mongodb");
  */
 const registerUser = async (req, res) => {
   try {
-    const { name, email } = req.body;
+    const { name, email, userId, imageUrl } = req.body;
 
     // Validate user input
-    if (!name || !email) {
+    if (!name || !email || !userId || !imageUrl) {
       return res.status(400).json({ message: "Please enter all fields" });
     }
 
@@ -21,12 +21,12 @@ const registerUser = async (req, res) => {
     });
 
     if (existingUser) {
-      return res.status(409).json({ message: "User already exists" }); // 409: Conflict
+      return res.status(409).json({ message: "User already exists" });
     }
 
     // Create the new user
     const user = await prisma.generalUser.create({
-      data: { email, name },
+      data: { email, name, userId, imageUrl },
     });
 
     return res

@@ -9,6 +9,7 @@ const authRouter = require("./routes/authRoutes");
 const eventRouter = require("./routes/eventRoutes");
 const formRouter = require("./routes/form");
 const userRouter = require("./routes/userRoutes");
+const postRouter = require("./routes/postRoutes");
 
 dotenv.config();
 
@@ -20,7 +21,7 @@ const corsConfig = {
   origin: [
     "http://localhost:3000",
     "https://dashboard-frontend-rnb-soul-picnic-radio.vercel.app",
-    "http://192.168.0.200:8081",
+    "http://192.168.0.197:8081",
     "http://localhost:8081",
     "https://rnbsouldashboard.com",
   ],
@@ -63,6 +64,7 @@ app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/event", eventRouter);
 app.use("/api/v1", formRouter);
 app.use("/api/v1/user", userRouter);
+app.use("/api/v1/post", postRouter);
 
 // Start the server
 const PORT = process.env.PORT || 5000;
