@@ -34,6 +34,7 @@ model Post {
   id       String      @id @default(auto()) @map("_id") @db.ObjectId
   author   GeneralUser @relation(fields: [authorId], references: [id])
   authorId String      @db.ObjectId
+  userId   String
   text     String?
   images   String[]
   likes    String[]    @default([])

@@ -34,6 +34,7 @@ const createPost = async (req, res) => {
         authorId: user?.id,
         text,
         images: imageUrls,
+        userId,
       },
     });
 
