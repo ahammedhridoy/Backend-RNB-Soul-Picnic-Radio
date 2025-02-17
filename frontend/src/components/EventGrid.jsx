@@ -29,6 +29,7 @@ const EventGrid = () => {
     setDeleteEventId(eventId);
     setOpenDelete(true);
   };
+
   const handleDeleteClose = () => {
     setOpenDelete(false);
     setDeleteEventId(null);
