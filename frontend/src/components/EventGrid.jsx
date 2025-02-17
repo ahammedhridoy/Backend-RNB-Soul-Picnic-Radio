@@ -85,13 +85,15 @@ const EventGrid = () => {
                   </Typography>
 
                   <Link href={`${event?.url}`} target="_blank">
-                    <Typography
-                      gutterBottom
-                      variant="p"
-                      component="div"
-                      className="line-clamp-2"
-                    >
-                      {event?.url}
+                    <Typography gutterBottom variant="p" component="div">
+                      <p
+                        style={{
+                          wordBreak: "break-all",
+                          overflowWrap: "break-word",
+                        }}
+                      >
+                        {event?.url}
+                      </p>
                     </Typography>
                   </Link>
                 </CardContent>
