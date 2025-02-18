@@ -21,7 +21,7 @@ const createPost = async (req, res) => {
 
     // Check if user exists
     const user = await prisma.generalUser.findUnique({
-      where: { userId },
+      where: { id: userId },
     });
 
     if (!user) {
@@ -34,7 +34,6 @@ const createPost = async (req, res) => {
         authorId: user?.id,
         text,
         images: imageUrls,
-        userId,
       },
     });
 
@@ -67,11 +66,11 @@ const getAllPosts = async (req, res) => {
 
 // ✅ Get Single Post by ID
 const getSinglePost = async (req, res) => {
-  const { id } = req.params;
+  const { postId } = req.params;
 
   try {
     const post = await prisma.post.findUnique({
-      where: { id },
+      where: { id: postId },
       include: { author: true },
     });
 
@@ -84,6 +83,30 @@ const getSinglePost = async (req, res) => {
     res
       .status(500)
       .json({ message: "Error fetching post.", error: error.message });
+  }
+};
+
+// ✅ Get use posts by User ID
+const getUserPosts = async (req, res) => {
+  const { userId } = req.params; // Get user ID from request params
+
+  try {
+    const userPosts = await prisma.post.findMany({
+      where: { authorId: userId }, // Filter posts by user ID
+      include: { author: true }, // Include user details if needed
+    });
+
+    if (!userPosts.length) {
+      return res.status(404).json({ message: "No posts found for this user." });
+    }
+
+    res
+      .status(200)
+      .json({ message: "User posts fetched successfully.", posts: userPosts });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Error fetching user posts.", error: error.message });
   }
 };
 
@@ -212,4 +235,5 @@ module.exports = {
   updatePost,
   deletePost,
   toggleLike,
+  getUserPosts,
 };

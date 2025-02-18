@@ -1,6 +1,8 @@
 const bcrypt = require("bcryptjs");
 const prisma = require("../utils/prismaClient");
 const { ObjectId } = require("mongodb");
+const jwt = require("jsonwebtoken");
+const generateToken = require("../utils/generateToken");
 
 /**
  * METHOD: POST
@@ -8,10 +10,10 @@ const { ObjectId } = require("mongodb");
  */
 const registerUser = async (req, res) => {
   try {
-    const { name, email, userId, imageUrl } = req.body;
+    const { firstName, lastName, email, password } = req.body;
 
     // Validate user input
-    if (!name || !email || !userId || !imageUrl) {
+    if (!firstName || !email || !lastName || !password) {
       return res.status(400).json({ message: "Please enter all fields" });
     }
 
@@ -24,9 +26,12 @@ const registerUser = async (req, res) => {
       return res.status(409).json({ message: "User already exists" });
     }
 
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     // Create the new user
     const user = await prisma.generalUser.create({
-      data: { email, name, userId, imageUrl },
+      data: { email, firstName, lastName, password: hashedPassword },
     });
 
     return res
@@ -34,6 +39,45 @@ const registerUser = async (req, res) => {
       .json({ message: "User registered successfully", user });
   } catch (error) {
     console.error("Error registering user:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+/**
+ * METHOD: POST
+ * API: /api/v1/user/login
+ */
+
+const login = async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const user = await prisma.generalUser.findUnique({ where: { email } });
+    if (!user) {
+      return res.status(401).json({ message: "Invalid email or password" });
+    }
+
+    const passwordMatch = await bcrypt.compare(password, user.password);
+    if (!passwordMatch) {
+      return res.status(401).json({ message: "Invalid email or password" });
+    }
+
+    const { accessToken, accessTokenExp } = await generateToken(user);
+
+    if (!accessToken || !accessTokenExp)
+      throw new Error("Failed to generate tokens.");
+    // Remove sensitive data
+    const { password: _, ...userWithoutPassword } = user;
+
+    return res.status(200).json({
+      message: "Login successful",
+      user: userWithoutPassword,
+      accessToken,
+      accessTokenExp,
+      isAuthenticated: true,
+    });
+  } catch (error) {
+    console.error("Error logging in:", error);
     return res.status(500).json({ message: "Internal server error" });
   }
 };
@@ -136,4 +180,5 @@ module.exports = {
   getAllUsers,
   getSingleUser,
   updateUser,
+  login,
 };

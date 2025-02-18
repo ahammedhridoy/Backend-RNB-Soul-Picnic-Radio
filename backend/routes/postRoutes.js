@@ -7,6 +7,7 @@ const {
   updatePost,
   deletePost,
   toggleLike,
+  getUserPosts,
 } = require("../controllers/postController");
 
 const postRouter = express.Router();
@@ -17,8 +18,11 @@ postRouter.post("/create", upload.array("images"), createPost);
 // GET /api/v1/post/all
 postRouter.get("/all", getAllPosts);
 
-// GET /api/v1/post/:id
-postRouter.get("/:id", getSinglePost);
+// GET /api/v1/post/:postId
+postRouter.get("/:postId", getSinglePost);
+
+// GET /api/v1/post/:userId/posts
+postRouter.get("/:userId", getUserPosts);
 
 // PATCH /api/v1/post/:id
 postRouter.patch("/:id", upload.array("images"), updatePost);
@@ -27,6 +31,6 @@ postRouter.patch("/:id", upload.array("images"), updatePost);
 postRouter.delete("/:id", deletePost);
 
 // DELETE /api/v1/post/:postId/like
-postRouter.post("/:postId/like", toggleLike);
+postRouter.post("/:postId/likes", toggleLike);
 
 module.exports = postRouter;
