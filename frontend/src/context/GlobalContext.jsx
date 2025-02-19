@@ -20,7 +20,10 @@ export const GlobalContextProvider = ({ children }) => {
     const accessTokenFromCookie = JSON.parse(
       localStorage.getItem("accessToken")
     );
-    const userFromCookie = JSON.parse(localStorage.getItem("user"));
+
+    const userFromCookie = localStorage.getItem("user")
+      ? JSON.parse(localStorage.getItem("user"))
+      : null;
 
     if (accessTokenFromCookie) {
       setAccessToken(accessTokenFromCookie);

@@ -102,64 +102,76 @@ const getAllUsers = async (req, res) => {
 };
 
 // Get User by ID
-const getSingleUser = async (req, res) => {
-  const { id } = req.params;
+// const getSingleUser = async (req, res) => {
+//   const { id } = req.params;
 
-  try {
-    if (!id || !ObjectId.isValid(id)) {
-      return res.status(400).json({ message: "Invalid or missing user ID." });
-    }
+//   try {
+//     if (!id || !ObjectId.isValid(id)) {
+//       return res.status(400).json({ message: "Invalid or missing user ID." });
+//     }
 
-    const user = await prisma.user.findUnique({
-      where: { id: id.toString() },
-    });
+//     const user = await prisma.user.findUnique({
+//       where: { id: id.toString() },
+//     });
 
-    if (!user) {
-      return res.status(404).json({ message: "User not found." });
-    }
+//     if (!user) {
+//       return res.status(404).json({ message: "User not found." });
+//     }
 
-    res.status(200).json({ message: "User fetched successfully.", user });
-  } catch (error) {
-    console.error("Error fetching user:", error);
-    res
-      .status(500)
-      .json({ message: "Error fetching user.", error: error.message });
-  }
-};
+//     res.status(200).json({ message: "User fetched successfully.", user });
+//   } catch (error) {
+//     console.error("Error fetching user:", error);
+//     res
+//       .status(500)
+//       .json({ message: "Error fetching user.", error: error.message });
+//   }
+// };
 
 // Update User
 const updateUser = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, email, role, password } = req.body;
 
-    if (!id || (!name && !email && !role)) {
-      return res.status(400).json({ message: "Invalid input data" });
-    }
+    console.log("Received ID:", id);
 
-    // Validate input fields
-    if (password && password.length < 6) {
-      return res.status(400).json({
-        message: "Password must be at least 6 characters long.",
-      });
-    }
+    const { firstName, lastName, email, password } = req.body;
 
-    // Hash the password if provided
-    const updatedData = {
-      ...(name && { name }),
-      ...(email && { email }),
-      ...(role && { role }),
-      ...(password && { password: await bcrypt.hash(password, 10) }),
-    };
+    let imageUrl;
 
     // Ensure the user exists
-    const user = await prisma.user.findUnique({ where: { id } });
+    const user = await prisma.generalUser.findUnique({
+      where: { id },
+    });
+
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Update the user
-    const updatedUser = await prisma.user.update({
+    // Handle Image Deletion and Update
+    if (req.file) {
+      imageUrl = `/uploads/${req.file.filename}`;
+
+      if (user.imageUrl && user.imageUrl !== "/uploads/defaultImage.png") {
+        const oldImagePath = path.join(__dirname, "..", user.imageUrl);
+        fs.unlink(oldImagePath, (err) => {
+          if (err && err.code !== "ENOENT") {
+            console.error("Error deleting old image:", err);
+          }
+        });
+      }
+    }
+
+    // Construct Update Object
+    const updatedData = {
+      ...(firstName && { firstName }),
+      ...(lastName && { lastName }),
+      ...(email && { email }),
+      ...(password && { password: await bcrypt.hash(password, 10) }),
+      ...(imageUrl && { imageUrl }),
+    };
+
+    // Update the User
+    const updatedUser = await prisma.generalUser.update({
       where: { id },
       data: updatedData,
     });
@@ -178,7 +190,7 @@ const updateUser = async (req, res) => {
 module.exports = {
   registerUser,
   getAllUsers,
-  getSingleUser,
+  // getSingleUser,
   updateUser,
   login,
 };

@@ -218,6 +218,7 @@ const updateUser = async (req, res) => {
 
     // Ensure the user exists
     const user = await prisma.user.findUnique({ where: { id } });
+
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }

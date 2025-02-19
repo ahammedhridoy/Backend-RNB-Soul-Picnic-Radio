@@ -1,6 +1,7 @@
 const prisma = require("../utils/prismaClient");
 const fs = require("fs");
 const path = require("path");
+const { ObjectId } = require("mongodb");
 
 /**
  * METHOD: POST
@@ -88,25 +89,32 @@ const getSinglePost = async (req, res) => {
 
 // ✅ Get use posts by User ID
 const getUserPosts = async (req, res) => {
-  const { userId } = req.params; // Get user ID from request params
+  const { authorId } = req.params;
+
+  if (!authorId) {
+    return res.status(400).json({ message: "Author ID is required." });
+  }
 
   try {
     const userPosts = await prisma.post.findMany({
-      where: { authorId: userId }, // Filter posts by user ID
-      include: { author: true }, // Include user details if needed
+      where: { authorId: authorId.toString() },
+      include: { author: true },
+      orderBy: { updatedAt: "desc" },
     });
 
     if (!userPosts.length) {
       return res.status(404).json({ message: "No posts found for this user." });
     }
 
-    res
-      .status(200)
-      .json({ message: "User posts fetched successfully.", posts: userPosts });
+    res.status(200).json({
+      message: "User posts fetched successfully.",
+      posts: userPosts,
+    });
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Error fetching user posts.", error: error.message });
+    res.status(500).json({
+      message: "Error fetching user posts.",
+      error: error.message,
+    });
   }
 };
 

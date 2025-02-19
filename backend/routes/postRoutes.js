@@ -22,7 +22,7 @@ postRouter.get("/all", getAllPosts);
 postRouter.get("/:postId", getSinglePost);
 
 // GET /api/v1/post/:userId/posts
-postRouter.get("/:userId", getUserPosts);
+postRouter.get("/user/:authorId", getUserPosts);
 
 // PATCH /api/v1/post/:id
 postRouter.patch("/:id", upload.array("images"), updatePost);

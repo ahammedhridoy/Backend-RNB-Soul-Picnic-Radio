@@ -24,7 +24,7 @@ model GeneralUser {
   firstName String
   lastName  String
   password  String
-  imageUrl  String? @default("/uploads/defaultUser.png")
+  imageUrl  String? @default("/uploads/defaultImage.png")
   posts     Post[]
 
   createdAt DateTime @default(now())
