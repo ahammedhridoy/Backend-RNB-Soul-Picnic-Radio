@@ -3,6 +3,8 @@ const prisma = require("../utils/prismaClient");
 const { ObjectId } = require("mongodb");
 const jwt = require("jsonwebtoken");
 const generateToken = require("../utils/generateToken");
+const path = require("path");
+const fs = require("fs");
 
 /**
  * METHOD: POST
@@ -132,9 +134,26 @@ const updateUser = async (req, res) => {
   try {
     const { id } = req.params;
 
-    console.log("Received ID:", id);
+    console.log("Received ID:", id, "Type:", typeof id);
+
+    if (!id) {
+      return res.status(400).json({ message: "Invalid or missing user ID." });
+    }
 
     const { firstName, lastName, email, password } = req.body;
+
+    if (!firstName && !lastName && !email) {
+      return res
+        .status(400)
+        .json({ message: "Please enter at least one field to update." });
+    }
+
+    // Validate input fields
+    if (password && password.length < 6) {
+      return res.status(400).json({
+        message: "Password must be at least 6 characters long.",
+      });
+    }
 
     let imageUrl;
 
@@ -176,9 +195,12 @@ const updateUser = async (req, res) => {
       data: updatedData,
     });
 
-    res
-      .status(200)
-      .json({ message: "User updated successfully", user: updatedUser });
+    const { password: _, ...userWithoutPassword } = updatedUser;
+
+    res.status(200).json({
+      message: "User updated successfully",
+      user: userWithoutPassword,
+    });
   } catch (error) {
     console.error("Error updating user:", error);
     res

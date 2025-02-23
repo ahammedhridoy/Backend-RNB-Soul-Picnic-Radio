@@ -1,6 +1,9 @@
 const express = require("express");
-const { registerUser, login } = require("../controllers/userController");
-const { updateUser } = require("../controllers/authController");
+const {
+  registerUser,
+  login,
+  updateUser,
+} = require("../controllers/userController");
 const { upload } = require("../helpers/multer");
 
 const userRouter = express.Router();

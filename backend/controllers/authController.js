@@ -182,7 +182,12 @@ const getSingleUser = async (req, res) => {
       return res.status(404).json({ message: "User not found." });
     }
 
-    res.status(200).json({ message: "User fetched successfully.", user });
+    const { password: _, ...userWithoutPassword } = user;
+
+    res.status(200).json({
+      message: "User fetched successfully.",
+      user: userWithoutPassword,
+    });
   } catch (error) {
     console.error("Error fetching user:", error);
     res
