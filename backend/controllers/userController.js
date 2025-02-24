@@ -1,10 +1,9 @@
 const bcrypt = require("bcryptjs");
 const prisma = require("../utils/prismaClient");
-const { ObjectId } = require("mongodb");
-const jwt = require("jsonwebtoken");
 const generateToken = require("../utils/generateToken");
 const path = require("path");
 const fs = require("fs");
+const { sendForgotPasswordEmail } = require("../helpers/nodemailer");
 
 /**
  * METHOD: POST
@@ -209,10 +208,45 @@ const updateUser = async (req, res) => {
   }
 };
 
+// Forgot Password
+
+const forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+    console.log(email);
+
+    const user = await prisma.generalUser.findUnique({
+      where: { email },
+    });
+    console.log(user);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Create new password
+    const generatedPassword = Math.random().toString(36).slice(-8);
+    console.log(generatedPassword);
+    const hashedPassword = await bcrypt.hash(generatedPassword, 10);
+
+    await prisma.generalUser.update({
+      where: { email },
+      data: { password: hashedPassword },
+    });
+
+    // Send email with new password
+    await sendForgotPasswordEmail(email, generatedPassword);
+
+    res.status(200).json({ message: "Password reset email sent" });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   registerUser,
   getAllUsers,
   // getSingleUser,
   updateUser,
   login,
+  forgotPassword,
 };
