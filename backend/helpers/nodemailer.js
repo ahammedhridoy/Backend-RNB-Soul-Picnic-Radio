@@ -1,12 +1,13 @@
 const nodemailer = require("nodemailer");
 
+// Nodemailer Transporter
 const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com", // Replace with your SMTP server
-  port: 465,
+  host: process.env.SMTP_HOST,
+  port: process.env.SMTP_PORT,
   secure: true,
   auth: {
-    user: process.env.SMTP_AUTH_USER,
-    pass: process.env.SMTP_AUTH_PASSWORD,
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS,
   },
   tls: {
     rejectUnauthorized: false,
@@ -29,15 +30,20 @@ const sendPasswordResetEmail = async (to, token) => {
 
 const sendForgotPasswordEmail = async (email, generatedPassword) => {
   const mailOptions = {
-    from: `RNB Soul APP ${process.env.SMTP_AUTH_USER}`,
+    from: `RNB Soul APP ${process.env.SMTP_AUTH_USER} <aiwebmail0@gmail.com>`,
     to: email,
     subject: "Password Reset Request",
     html: `<p>Your password has been reset successfully.</p>
-            <p>Your new password is: <strong style="color: green">${generatedPassword}</strong></p>
-           <p>Please log in with your new password.</p>`,
+          <p>Your new password is: <strong style="color: green">${generatedPassword}</strong></p>
+         <p>Please log in with your new password.</p>`,
   };
 
-  await transporter.sendMail(mailOptions);
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log(`✅ Email sent to ${email}`);
+  } catch (error) {
+    console.error("❌ Email sending error:", error);
+  }
 };
 
 module.exports = {
