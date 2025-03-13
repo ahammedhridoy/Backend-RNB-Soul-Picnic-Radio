@@ -4,6 +4,7 @@ const {
   login,
   updateUser,
   forgotPassword,
+  deleteUser,
 } = require("../controllers/userController");
 const { upload } = require("../helpers/multer");
 
@@ -20,5 +21,8 @@ userRouter.patch("/update/single/:id", upload.single("imageUrl"), updateUser);
 
 // POST /api/v1/user/update/password
 userRouter.post("/update/password", forgotPassword);
+
+// POST /api/v1/user/delete/account/:id
+userRouter.delete("/delete/account/:id", deleteUser);
 
 module.exports = userRouter;

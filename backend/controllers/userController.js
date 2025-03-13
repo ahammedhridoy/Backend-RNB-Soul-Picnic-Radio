@@ -208,6 +208,75 @@ const updateUser = async (req, res) => {
   }
 };
 
+// Delete User
+
+const deleteUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    console.log("Received ID for deletion:", id, "Type:", typeof id);
+
+    if (!id) {
+      return res.status(400).json({ message: "Invalid or missing user ID." });
+    }
+
+    // Ensure the user exists
+    const user = await prisma.generalUser.findUnique({
+      where: { id },
+      include: { posts: true }, // Include posts to delete their images as well
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Delete user posts and their associated images
+    if (user.posts.length > 0) {
+      for (const post of user.posts) {
+        if (post.images.length > 0) {
+          post.images.forEach((image) => {
+            const imagePath = path.join(__dirname, "..", image);
+            fs.unlink(imagePath, (err) => {
+              if (err && err.code !== "ENOENT") {
+                console.error("Error deleting post image:", err);
+              }
+            });
+          });
+        }
+      }
+
+      // Delete all posts associated with the user
+      await prisma.post.deleteMany({
+        where: { authorId: id },
+      });
+    }
+
+    // Delete user profile image (except default)
+    if (user.imageUrl && user.imageUrl !== "/uploads/defaultImage.png") {
+      const imagePath = path.join(__dirname, "..", user.imageUrl);
+      fs.unlink(imagePath, (err) => {
+        if (err && err.code !== "ENOENT") {
+          console.error("Error deleting profile image:", err);
+        }
+      });
+    }
+
+    // Delete the user from the database
+    await prisma.generalUser.delete({
+      where: { id },
+    });
+
+    res
+      .status(200)
+      .json({ message: "User and associated posts deleted successfully." });
+  } catch (error) {
+    console.error("Error deleting user:", error);
+    res
+      .status(500)
+      .json({ message: "Error deleting user.", error: error.message });
+  }
+};
+
 // Forgot Password
 
 const forgotPassword = async (req, res) => {
@@ -249,4 +318,5 @@ module.exports = {
   updateUser,
   login,
   forgotPassword,
+  deleteUser,
 };
