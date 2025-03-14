@@ -11,10 +11,10 @@ const { sendForgotPasswordEmail } = require("../helpers/nodemailer");
  */
 const registerUser = async (req, res) => {
   try {
-    const { firstName, lastName, email, password } = req.body;
+    const { firstName, lastName, email, password, agreed } = req.body;
 
     // Validate user input
-    if (!firstName || !email || !lastName || !password) {
+    if (!firstName || !email || !lastName || !password || !agreed) {
       return res.status(400).json({ message: "Please enter all fields" });
     }
 
@@ -32,7 +32,13 @@ const registerUser = async (req, res) => {
 
     // Create the new user
     const user = await prisma.generalUser.create({
-      data: { email, firstName, lastName, password: hashedPassword },
+      data: {
+        email,
+        firstName,
+        lastName,
+        password: hashedPassword,
+        agreedToEULA: agreed,
+      },
     });
 
     return res
@@ -311,6 +317,40 @@ const forgotPassword = async (req, res) => {
   }
 };
 
+// Block a user
+const blockUser = async (req, res) => {
+  try {
+    const { userId, blockedUserId } = req.body;
+
+    // Check if the user exists
+    const user = await prisma.generalUser.findUnique({ where: { id: userId } });
+    const blockedUser = await prisma.generalUser.findUnique({
+      where: { id: blockedUserId },
+    });
+
+    if (!user || !blockedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Check if the user is already blocked
+    if (user.blockedUsers.includes(blockedUserId)) {
+      return res.status(400).json({ message: "User is already blocked." });
+    }
+
+    // Update the user's blocked list
+    await prisma.generalUser.update({
+      where: { id: userId },
+      data: { blockedUsers: { push: blockedUserId } },
+    });
+
+    res.status(200).json({ message: "User blocked successfully." });
+  } catch (error) {
+    console.error("Error blocking user:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+// Export
 module.exports = {
   registerUser,
   getAllUsers,
@@ -319,4 +359,5 @@ module.exports = {
   login,
   forgotPassword,
   deleteUser,
+  blockUser,
 };
