@@ -53,7 +53,6 @@ const createPost = async (req, res) => {
 const getAllPosts = async (req, res) => {
   try {
     const posts = await prisma.post.findMany({
-      include: { author: true },
       orderBy: { updatedAt: "desc" },
     });
 

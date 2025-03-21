@@ -9,6 +9,7 @@ const DashSidebar = () => {
     { name: "Events", path: "/dashboard" },
     { name: "Users", path: "/dashboard/manage-user" },
     { name: "Settings", path: "/dashboard/settings" },
+    { name: "Reports", path: "/dashboard/reports" },
   ];
 
   return (

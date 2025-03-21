@@ -48,13 +48,13 @@ model Post {
 }
 
 model Report {
-  id         String      @id @default(auto()) @map("_id") @db.ObjectId
-  post       Post        @relation(fields: [postId], references: [id])
-  postId     String      @db.ObjectId
-  reporter   GeneralUser @relation(fields: [reporterId], references: [id]) // Bi-directional relation
-  reporterId String      @db.ObjectId
-  reason     String
-  status     String      @default("pending")
+  id           String      @id @default(auto()) @map("_id") @db.ObjectId
+  post         Post        @relation(fields: [postId], references: [id])
+  postId       String      @db.ObjectId
+  reporter     GeneralUser @relation(fields: [reporterId], references: [id]) // Bi-directional relation
+  reporterId   String      @db.ObjectId
+  reason       String
+  reportStatus String      @default("pending")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

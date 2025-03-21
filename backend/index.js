@@ -24,6 +24,7 @@ const corsConfig = {
     "https://dashboard-frontend-rnb-soul-picnic-radio.vercel.app",
     "http://192.168.0.103:8081",
     "http://192.168.0.197:8081",
+    "http://192.168.0.104:8081",
     "http://localhost:8081",
     "https://rnbsouldashboard.com",
   ],

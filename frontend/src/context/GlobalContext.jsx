@@ -13,6 +13,7 @@ export const GlobalContextProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
   const [events, setEvents] = useState([]);
+  const [reports, setReports] = useState([]);
 
   useEffect(() => {
     setLoading(true);
@@ -256,10 +257,82 @@ export const GlobalContextProvider = ({ children }) => {
     }
   };
 
+  // Fetch All reports
+  const fetchReports = async () => {
+    try {
+      const response = await apiClient.get("/api/v1/report/all", {
+        withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${JSON.parse(
+            localStorage.getItem("accessToken")
+          )}`,
+        },
+      });
+
+      if (response.status === 200) {
+        setReports(response?.data?.reports);
+        return response.data;
+      }
+    } catch (error) {
+      console.error("Error fetching reports");
+      return [];
+    }
+  };
+
+  // Delete Report
+  const deleteReport = async (id) => {
+    try {
+      const response = await apiClient.delete(`/api/v1/report/delete/${id}`, {
+        withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      if (response?.status === 200) {
+        toast.success("Report deleted successfully");
+        fetchReports();
+        return true;
+      }
+    } catch (error) {
+      console.error("Error deleting Report:", error);
+      toast.error(error.response?.data?.message || "Server error");
+      return false;
+    }
+  };
+
+  // Update report
+  const updateReportApi = async (id, reportStatus) => {
+    try {
+      const response = await apiClient.patch(
+        `/api/v1/report/update/${id}`,
+        reportStatus,
+        {
+          withCredentials: true,
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        toast.success("Report updated successfully");
+        fetchReports();
+        return true;
+      }
+    } catch (error) {
+      console.error("Error updating report:", error);
+      toast.error(error.response?.data?.message || "Server error");
+      return false;
+    }
+  };
+
   // Fetching
   useEffect(() => {
     fetchUsers();
     fetchEvents();
+    fetchReports();
   }, []);
 
   return (
@@ -281,6 +354,11 @@ export const GlobalContextProvider = ({ children }) => {
         deleteUser,
         fetchEvents,
         users,
+        fetchReports,
+        reports,
+        deleteReport,
+        updateReportApi,
+        accessToken,
       }}
     >
       {children}
