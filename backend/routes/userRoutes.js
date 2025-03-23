@@ -5,6 +5,7 @@ const {
   updateUser,
   forgotPassword,
   deleteUser,
+  getSingleUser,
 } = require("../controllers/userController");
 const { upload } = require("../helpers/multer");
 
@@ -24,5 +25,8 @@ userRouter.post("/update/password", forgotPassword);
 
 // POST /api/v1/user/delete/account/:id
 userRouter.delete("/delete/account/:id", deleteUser);
+
+// GET /api/v1/user/single/:id
+userRouter.get("/single/:id", getSingleUser);
 
 module.exports = userRouter;

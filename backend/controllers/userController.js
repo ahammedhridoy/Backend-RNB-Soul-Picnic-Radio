@@ -109,30 +109,31 @@ const getAllUsers = async (req, res) => {
 };
 
 // Get User by ID
-// const getSingleUser = async (req, res) => {
-//   const { id } = req.params;
+const getSingleUser = async (req, res) => {
+  const { id } = req.params;
 
-//   try {
-//     if (!id || !ObjectId.isValid(id)) {
-//       return res.status(400).json({ message: "Invalid or missing user ID." });
-//     }
+  console.log("Received ID:", id, "Type:", typeof id);
+  try {
+    if (!id) {
+      return res.status(400).json({ message: "Invalid or missing user ID." });
+    }
 
-//     const user = await prisma.user.findUnique({
-//       where: { id: id.toString() },
-//     });
+    const user = await prisma.generalUser.findUnique({
+      where: { id },
+    });
 
-//     if (!user) {
-//       return res.status(404).json({ message: "User not found." });
-//     }
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
 
-//     res.status(200).json({ message: "User fetched successfully.", user });
-//   } catch (error) {
-//     console.error("Error fetching user:", error);
-//     res
-//       .status(500)
-//       .json({ message: "Error fetching user.", error: error.message });
-//   }
-// };
+    res.status(200).json({ message: "User fetched successfully.", user });
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    res
+      .status(500)
+      .json({ message: "Error fetching user.", error: error.message });
+  }
+};
 
 // Update User
 const updateUser = async (req, res) => {
@@ -229,15 +230,29 @@ const deleteUser = async (req, res) => {
     // Ensure the user exists
     const user = await prisma.generalUser.findUnique({
       where: { id },
-      include: { posts: true }, // Include posts to delete their images as well
+      include: { posts: { include: { reports: true } }, reports: true }, // Include reports and posts
     });
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Delete user posts and their associated images
+    // ✅ 1. Delete reports where the user is the reporter
+    await prisma.report.deleteMany({
+      where: { reporterId: id },
+    });
+
+    // ✅ 2. Delete reports associated with the user's posts
+    const userPostIds = user.posts.map((post) => post.id);
+    if (userPostIds.length > 0) {
+      await prisma.report.deleteMany({
+        where: { postId: { in: userPostIds } },
+      });
+    }
+
+    // ✅ 3. Delete the user's posts (after removing associated reports)
     if (user.posts.length > 0) {
+      // Delete associated images from the file system
       for (const post of user.posts) {
         if (post.images.length > 0) {
           post.images.forEach((image) => {
@@ -251,13 +266,13 @@ const deleteUser = async (req, res) => {
         }
       }
 
-      // Delete all posts associated with the user
+      // Delete posts
       await prisma.post.deleteMany({
         where: { authorId: id },
       });
     }
 
-    // Delete user profile image (except default)
+    // ✅ 4. Delete user profile image (except default)
     if (user.imageUrl && user.imageUrl !== "/uploads/defaultImage.png") {
       const imagePath = path.join(__dirname, "..", user.imageUrl);
       fs.unlink(imagePath, (err) => {
@@ -267,14 +282,14 @@ const deleteUser = async (req, res) => {
       });
     }
 
-    // Delete the user from the database
+    // ✅ 5. Finally, delete the user
     await prisma.generalUser.delete({
       where: { id },
     });
 
     res
       .status(200)
-      .json({ message: "User and associated posts deleted successfully." });
+      .json({ message: "User and associated data deleted successfully." });
   } catch (error) {
     console.error("Error deleting user:", error);
     res
@@ -354,7 +369,7 @@ const blockUser = async (req, res) => {
 module.exports = {
   registerUser,
   getAllUsers,
-  // getSingleUser,
+  getSingleUser,
   updateUser,
   login,
   forgotPassword,

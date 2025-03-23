@@ -4,6 +4,7 @@ const {
   getAllReports,
   updateReport,
   deleteReport,
+  getUserReport,
 } = require("../controllers/reportController");
 
 const reportRouter = express.Router();
@@ -19,5 +20,8 @@ reportRouter.patch("/update/:id", updateReport);
 
 // POST /api/v1/report/delete/:id
 reportRouter.delete("/delete/:id", deleteReport);
+
+// POST /api/v1/report/user/:id
+reportRouter.get("/user/:id", getUserReport);
 
 module.exports = reportRouter;

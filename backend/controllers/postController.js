@@ -53,11 +53,31 @@ const createPost = async (req, res) => {
 const getAllPosts = async (req, res) => {
   try {
     const posts = await prisma.post.findMany({
+      include: {
+        author: {
+          select: {
+            id: true,
+            firstName: true,
+            email: true,
+            lastName: true,
+            imageUrl: true,
+          },
+        },
+      },
       orderBy: { updatedAt: "desc" },
     });
 
-    res.status(200).json({ message: "Posts fetched successfully.", posts });
+    // Ensure null authors are handled properly
+    const validPosts = posts.map((post) => ({
+      ...post,
+      author: post.author || null, // Explicitly allow null authors
+    }));
+
+    res
+      .status(200)
+      .json({ message: "Posts fetched successfully.", posts: validPosts });
   } catch (error) {
+    console.error("Error fetching posts:", error);
     res
       .status(500)
       .json({ message: "Error fetching posts.", error: error.message });

@@ -21,12 +21,18 @@ const reportPost = async (req, res) => {
     });
 
     if (existingReport) {
+      // Update the existing report with the new reason
+      const updatedReport = await prisma.report.update({
+        where: { id: existingReport.id },
+        data: { reason }, // Update only the reason field
+      });
+
       return res
-        .status(400)
-        .json({ message: "You have already reported this post." });
+        .status(200)
+        .json({ message: "Report updated successfully.", updatedReport });
     }
 
-    // Create the report
+    // Create a new report if it doesn't exist
     const report = await prisma.report.create({
       data: {
         post: { connect: { id: postId } }, // Proper relation mapping
@@ -52,6 +58,30 @@ const getAllReports = async (req, res) => {
       orderBy: { createdAt: "asc" },
     });
 
+    // ✅ If you only want reports with an existing post, filter out reports with `null` posts
+    const validReports = reports.filter((report) => report.post !== null);
+
+    res.status(200).json({
+      message: "Reports fetched successfully.",
+      reports: validReports,
+    });
+  } catch (error) {
+    console.error("Error fetching reports:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+const getUserReport = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const reports = await prisma.report.findMany({
+      where: { reporterId: id },
+      include: {
+        post: true,
+        reporter: true,
+      },
+      orderBy: { createdAt: "desc" },
+    });
     res.status(200).json({ message: "Reports fetched successfully.", reports });
   } catch (error) {
     console.error("Error fetching reports:", error);
@@ -105,4 +135,5 @@ module.exports = {
   getAllReports,
   deleteReport,
   updateReport,
+  getUserReport,
 };

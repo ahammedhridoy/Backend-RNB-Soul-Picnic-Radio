@@ -27,8 +27,8 @@ model GeneralUser {
   imageUrl     String?  @default("/uploads/defaultImage.png")
   agreedToEULA Boolean  @default(false)
   posts        Post[]
-  reports      Report[] // <-- Added relation for reported posts
-  blockedUsers String[] @default([]) // Store blocked user IDs
+  reports      Report[]
+  blockedUsers Json     @default("[]")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

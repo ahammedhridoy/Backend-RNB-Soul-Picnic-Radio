@@ -11,6 +11,7 @@ const formRouter = require("./routes/form");
 const userRouter = require("./routes/userRoutes");
 const postRouter = require("./routes/postRoutes");
 const reportRouter = require("./routes/reportRoute");
+const blockRouter = require("./routes/blockRoute");
 
 dotenv.config();
 
@@ -69,6 +70,7 @@ app.use("/api/v1", formRouter);
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/post", postRouter);
 app.use("/api/v1/report", reportRouter);
+app.use("/api/v1/user", blockRouter);
 
 // Start the server
 const PORT = process.env.PORT || 5000;
