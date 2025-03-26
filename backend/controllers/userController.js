@@ -112,7 +112,6 @@ const getAllUsers = async (req, res) => {
 const getSingleUser = async (req, res) => {
   const { id } = req.params;
 
-  console.log("Received ID:", id, "Type:", typeof id);
   try {
     if (!id) {
       return res.status(400).json({ message: "Invalid or missing user ID." });
@@ -139,8 +138,6 @@ const getSingleUser = async (req, res) => {
 const updateUser = async (req, res) => {
   try {
     const { id } = req.params;
-
-    console.log("Received ID:", id, "Type:", typeof id);
 
     if (!id) {
       return res.status(400).json({ message: "Invalid or missing user ID." });
@@ -220,8 +217,6 @@ const updateUser = async (req, res) => {
 const deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
-
-    console.log("Received ID for deletion:", id, "Type:", typeof id);
 
     if (!id) {
       return res.status(400).json({ message: "Invalid or missing user ID." });

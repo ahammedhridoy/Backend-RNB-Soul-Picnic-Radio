@@ -19,19 +19,28 @@ model User {
 }
 
 model GeneralUser {
-  id           String   @id @default(auto()) @map("_id") @db.ObjectId
-  email        String   @unique
+  id           String        @id @default(auto()) @map("_id") @db.ObjectId
+  email        String        @unique
   firstName    String
   lastName     String
   password     String
-  imageUrl     String?  @default("/uploads/defaultImage.png")
-  agreedToEULA Boolean  @default(false)
+  imageUrl     String?       @default("/uploads/defaultImage.png")
+  agreedToEULA Boolean       @default(false)
   posts        Post[]
   reports      Report[]
-  blockedUsers Json     @default("[]")
+  blockedUsers BlockedUser[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model BlockedUser {
+  id          String      @id @default(auto()) @map("_id") @db.ObjectId
+  blocker     GeneralUser @relation(fields: [blockerId], references: [id])
+  blockerId   String      @db.ObjectId
+  blockedId   String
+  blockedName String
+  createdAt   DateTime    @default(now())
 }
 
 model Post {
